@@ -3,6 +3,7 @@ package org.example.orderservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.orderservice.dto.OrderDto;
+import org.example.orderservice.dto.OrderIdDto;
 import org.example.orderservice.model.OrderStatus;
 import org.example.orderservice.service.OrderService;
 import org.springframework.http.HttpStatus;
@@ -18,21 +19,22 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<OrderDto>> findOrdersByStatus(@PathVariable OrderStatus status) {
-        return ResponseEntity.status(HttpStatus.OK)
-                             .body(orderService.findOrdersByStatus(status));
-    }
     @PostMapping
     public ResponseEntity<OrderDto> saveOrder(@Valid @RequestBody OrderDto orderDto) {
         orderDto = orderService.createOrder(orderDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderDto);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrderDto> findOrder(@PathVariable int id) {
-        OrderDto orderDto = orderService.findOrder(id);
+    @PostMapping("/order")
+    public ResponseEntity<OrderDto> findOrder(@Valid @RequestBody OrderIdDto orderIdDto) {
+        OrderDto orderDto = orderService.findOrder(orderIdDto.getOrderId());
         return ResponseEntity.status(HttpStatus.OK).body(orderDto);
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<OrderDto>> findOrdersByStatus(@PathVariable OrderStatus status) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderService.findOrdersByStatus(status));
     }
 
     @GetMapping
@@ -47,9 +49,9 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(orderDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable int id) {
-        orderService.deleteOrder(id);
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteOrder(@Valid @RequestBody OrderIdDto orderIdDto) {
+        orderService.deleteOrder(orderIdDto.getOrderId());
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

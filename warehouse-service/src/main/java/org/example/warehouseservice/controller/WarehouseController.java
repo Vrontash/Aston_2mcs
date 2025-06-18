@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.warehouseservice.dto.ItemDto;
 
+import org.example.warehouseservice.dto.ItemIdDto;
 import org.example.warehouseservice.dto.OrderDto;
 import org.example.warehouseservice.service.WarehouseService;
 import org.springframework.http.HttpStatus;
@@ -28,9 +29,9 @@ public class WarehouseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(itemDto);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findItem(@PathVariable int id) {
-        ItemDto itemDto = warehouseService.findItem(id);
+    @PostMapping("/item")
+    public ResponseEntity<?> findItem(@Valid @RequestBody ItemIdDto itemIdDto) {
+        ItemDto itemDto = warehouseService.findItem(itemIdDto.getItemId());
         return ResponseEntity.status(HttpStatus.OK).body(itemDto);
     }
 
@@ -45,9 +46,9 @@ public class WarehouseController {
         itemDto = warehouseService.updateItem(itemDto);
         return ResponseEntity.status(HttpStatus.OK).body(itemDto);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteItem(@PathVariable int id) {
-        warehouseService.deleteItem(id);
+    @DeleteMapping()
+    public ResponseEntity<?> deleteItem(@Valid @RequestBody  ItemIdDto itemIdDto) {
+        warehouseService.deleteItem(itemIdDto.getItemId());
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
