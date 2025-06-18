@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final KafkaSender kafkaSender;
+    private final KafkaSender<OrderDto> kafkaSender;
     private final OrderRepository orderRepository;
     private final KafkaProperties kafkaProperties;
 

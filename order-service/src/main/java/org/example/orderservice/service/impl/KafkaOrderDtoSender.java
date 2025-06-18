@@ -2,6 +2,7 @@ package org.example.orderservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.orderservice.dto.OrderDto;
 import org.example.orderservice.exception.KafkaMessageNotSendException;
 import org.example.orderservice.service.KafkaSender;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -10,12 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class KafkaSenderImpl implements KafkaSender {
+public class KafkaOrderDtoSender implements KafkaSender<OrderDto> {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, OrderDto> kafkaTemplate;
 
     @Override
-    public void send(String topic, Object message) {
+    public void send(String topic, OrderDto message) {
         try {
             kafkaTemplate.send(topic, message);
             log.info("Kafka: Message sent to topic: {} with message: {}", topic, message);
@@ -26,7 +27,7 @@ public class KafkaSenderImpl implements KafkaSender {
     }
 
     @Override
-    public void send(String topic, String key, Object message) {
+    public void send(String topic, String key, OrderDto message) {
         try {
             kafkaTemplate.send(topic, key,  message);
             log.info("Kafka: Message sent to topic: {} with key: {} and message: {}", topic, key, message);

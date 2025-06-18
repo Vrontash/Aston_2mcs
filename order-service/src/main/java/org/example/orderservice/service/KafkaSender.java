@@ -1,6 +1,6 @@
 package org.example.orderservice.service;
 
-public interface KafkaSender{
-    void send(String topic, Object message);
-    void send(String topic, String key, Object message);
+public  interface  KafkaSender<T>{
+    void send(String topic, T message);
+    void send(String topic, String key, T message);
 }

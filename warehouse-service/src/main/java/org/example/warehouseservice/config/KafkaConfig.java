@@ -47,7 +47,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderDto> kafkaListenerContainerFactory(KafkaTemplate<String, Object> kafkaTemplate) {
+    public ConcurrentKafkaListenerContainerFactory<String, OrderDto> kafkaListenerContainerFactory(KafkaTemplate<String, OrderDto> kafkaTemplate) {
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(
                                                 new DeadLetterPublishingRecoverer(kafkaTemplate),
                                                 new FixedBackOff(
@@ -62,7 +62,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, Object> producerFactory() {
+    public ProducerFactory<String, OrderDto> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getProducer().getBootstrapServer());
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, kafkaProperties.getProducer().getKeySerializer());
@@ -71,7 +71,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
+    public KafkaTemplate<String, OrderDto> kafkaTemplate(ProducerFactory<String, OrderDto> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
