@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.warehouseservice.dto.ItemDto;
 import org.example.warehouseservice.dto.OrderDto;
 import org.example.warehouseservice.exception.ItemNotFoundException;
+import org.example.warehouseservice.mapper.ItemMapper;
 import org.example.warehouseservice.model.Item;
 import org.example.warehouseservice.model.OrderStatus;
 import org.example.warehouseservice.repository.WarehouseRepository;
@@ -26,17 +27,18 @@ import java.util.stream.Collectors;
 public class WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final OrderService orderService;
+    private final ItemMapper itemMapper;
 
     public ItemDto createItem(ItemDto itemDto) {
-        Item item = warehouseRepository.save(dtoToEntity(itemDto));
+        Item item = warehouseRepository.save(itemMapper.toItem(itemDto));
         log.info("Item created : {}", item);
-        return entityToDto(item);
+        return itemMapper.toItemDto(item);
     }
 
     public ItemDto findItem(int id) {
         log.info("Get item with Id: {}", id);
         return warehouseRepository.findById(id)
-                .map(this::entityToDto)
+                .map(itemMapper::toItemDto)
                 .orElseThrow(() -> new ItemNotFoundException(id));
     }
 
@@ -44,7 +46,7 @@ public class WarehouseService {
         log.info("Retrieved all items");
         return warehouseRepository.findAll()
                 .stream()
-                .map(this::entityToDto)
+                .map(itemMapper::toItemDto)
                 .toList();
     }
     public Map<Integer, Integer> findAllItemsQuantity(){
@@ -57,12 +59,9 @@ public class WarehouseService {
     public ItemDto updateItem(ItemDto itemDto) {
         Item item = warehouseRepository.findById(itemDto.getItemId())
                 .orElseThrow(() -> new ItemNotFoundException(itemDto.getItemId()));
-        Optional.ofNullable(itemDto.getItemName())
-                .filter(name -> !name.isBlank())
-                .ifPresent(item::setItemName);
-        item.setQuantity(itemDto.getQuantity());
+        itemMapper.updateItemFromDto(itemDto, item);
         log.info("Item updated : {}", item);
-        return entityToDto(warehouseRepository.save(item));
+        return itemMapper.toItemDto(warehouseRepository.save(item));
     }
 
     public void deleteItem(int id) {
@@ -97,20 +96,5 @@ public class WarehouseService {
             checkSingleOrderForStatusChange(orderDto, items);
         }
         return orders;
-    }
-
-    private Item dtoToEntity(ItemDto itemDto) {
-        Item item = new Item();
-        item.setItemName(itemDto.getItemName());
-        item.setQuantity(itemDto.getQuantity());
-        return item;
-    }
-
-    private ItemDto entityToDto(Item item) {
-        ItemDto itemDto = new ItemDto();
-        itemDto.setItemId(item.getItemId());
-        itemDto.setItemName(item.getItemName());
-        itemDto.setQuantity(item.getQuantity());
-        return itemDto;
     }
 }

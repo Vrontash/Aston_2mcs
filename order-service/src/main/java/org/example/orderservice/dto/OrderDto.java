@@ -1,9 +1,6 @@
 package org.example.orderservice.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -17,7 +14,6 @@ import java.math.BigDecimal;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"orderId", "customerId", "itemId", "quantity","price", "status"})
 public class OrderDto {
 
     @NotNull

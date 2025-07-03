@@ -31,6 +31,7 @@ public class Order {
     @NotNull
     private BigDecimal price;
 
+    @NotNull
     private OrderStatus status;
 
 }
