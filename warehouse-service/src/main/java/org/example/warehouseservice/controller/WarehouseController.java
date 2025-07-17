@@ -1,0 +1,55 @@
+package org.example.warehouseservice.controller;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.example.warehouseservice.dto.ItemDto;
+
+import org.example.warehouseservice.dto.ItemIdDto;
+import org.example.warehouseservice.dto.OrderDto;
+import org.example.warehouseservice.service.WarehouseService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+@RestController
+@RequestMapping("/items")
+@RequiredArgsConstructor
+public class WarehouseController {
+    private final WarehouseService warehouseService;
+
+    @PutMapping("/orders")
+    public ResponseEntity<?> processCreatedOrders() {
+        List<OrderDto> orders = warehouseService.checkOrdersForStatusChange();
+        return ResponseEntity.status(HttpStatus.OK).body(orders);
+    }
+    @PostMapping
+    public ResponseEntity<?> saveItem(@Valid @RequestBody ItemDto itemDto) {
+        itemDto = warehouseService.createItem(itemDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(itemDto);
+    }
+
+    @PostMapping("/item")
+    public ResponseEntity<?> findItem(@Valid @RequestBody ItemIdDto itemIdDto) {
+        ItemDto itemDto = warehouseService.findItem(itemIdDto.getItemId());
+        return ResponseEntity.status(HttpStatus.OK).body(itemDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> findAllItem() {
+        List<ItemDto> itemDtoList = warehouseService.findAllItems();
+        return ResponseEntity.status(HttpStatus.OK).body(itemDtoList);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateItem(@Valid @RequestBody ItemDto itemDto) {
+        itemDto = warehouseService.updateItem(itemDto);
+        return ResponseEntity.status(HttpStatus.OK).body(itemDto);
+    }
+    @DeleteMapping()
+    public ResponseEntity<?> deleteItem(@Valid @RequestBody  ItemIdDto itemIdDto) {
+        warehouseService.deleteItem(itemIdDto.getItemId());
+        return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+}
