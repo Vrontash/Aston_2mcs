@@ -1,4 +1,4 @@
-package org.example.orderservice.config;
+package org.example.orderservice.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
